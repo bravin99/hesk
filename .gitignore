@@ -1,0 +1,23 @@
+# --- Hesk Specifics ---
+# Do not commit the configuration file if it contains hardcoded DB credentials
+hesk_settings.inc.php
+
+# Do not commit user uploads/attachments
+attachments/*
+!attachments/index.htm
+!attachments/.htaccess
+
+# Do not commit temporary cache files
+cache/*
+!cache/index.htm
+!cache/.htaccess
+
+# --- System & IDE ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Docker ---
+.dockerignore
+docker-compose.override.yml
