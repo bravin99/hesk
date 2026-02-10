@@ -1,0 +1,49 @@
+name: docker-build
+on:
+  push:
+    branches:
+      - main
+      - dev
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      
+      - name: Determine environment and tag
+        id: vars
+        run: |
+          set -euo pipefail
+          ref="${GITHUB_REF#refs/heads/}"
+          if [ "$ref" = "main" ]; then
+            env="prod"
+          else
+            env="dev"
+          fi
+          tag="${GITHUB_SHA:0:7}"
+          echo "env=$env" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            shumwe/truehost:${{ steps.vars.outputs.tag }}-${{ steps.vars.outputs.env }}
+            shumwe/truehost:latest-${{ steps.vars.outputs.env }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
