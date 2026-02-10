@@ -43,7 +43,7 @@ jobs:
           context: .
           push: true
           tags: |
-            shumwe/truehost:${{ steps.vars.outputs.tag }}-${{ steps.vars.outputs.env }}
-            shumwe/truehost:latest-${{ steps.vars.outputs.env }}
+            shumwe/hesk:${{ steps.vars.outputs.tag }}-${{ steps.vars.outputs.env }}
+            shumwe/hesk:latest-${{ steps.vars.outputs.env }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
